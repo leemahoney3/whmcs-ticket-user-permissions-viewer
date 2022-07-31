@@ -11,7 +11,7 @@ use Illuminate\Database\Capsule\Manager as Capsule;
  * @author     Lee Mahoney <lee@leemahoney.dev>
  * @copyright  Copyright (c) Lee Mahoney 2022
  * @license    MIT
- * @version    1.2.0
+ * @version    1.0.0
  * @link       https://leemahoney.dev
  */
 
