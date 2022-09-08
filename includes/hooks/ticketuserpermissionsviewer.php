@@ -11,7 +11,7 @@ use Illuminate\Database\Capsule\Manager as Capsule;
  * @author     Lee Mahoney <lee@leemahoney.dev>
  * @copyright  Copyright (c) Lee Mahoney 2022
  * @license    MIT
- * @version    1.0.0
+ * @version    1.0.1
  * @link       https://leemahoney.dev
  */
 
@@ -23,11 +23,11 @@ if (!defined('WHMCS')) {
 function ticket_user_permissions_viewer($vars) {
 
     # Grab the ticket ID
-    $ticketid = $vars['ticketid'];
+    $ticketID = $vars['ticketid'];
 
     # Grab the ticket details as well as all replies to the ticket
-    $ticket         = Capsule::table('tbltickets')->where('id', $ticketid)->first();
-    $ticketReplies  = Capsule::table('tblticketreplies')->where('tid', $ticketid)->get();
+    $ticket         = Capsule::table('tbltickets')->where('id', $ticketID)->first();
+    $ticketReplies  = Capsule::table('tblticketreplies')->where('tid', $ticketID)->get();
 
     # Store the user ID's for those involved with the tickes
     $userIds = [];
