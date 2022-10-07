@@ -17,11 +17,7 @@ If a ticket is opened by a guest or contact, or perhaps a guest or contact reply
 
 ## How do I install this?
 
-1. Download the zip file from the **Releases** section.
-
-2. Copy the ```includes``` folder to your root WHMCS directory.
-
-3. That's it, your all good to go!
+1. Copy the ```includes``` folder to your root WHMCS directory.
 
 ## Have a feature request?
 
