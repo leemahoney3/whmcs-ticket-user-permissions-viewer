@@ -1,6 +1,9 @@
 <?php
 
-use Illuminate\Database\Capsule\Manager as Capsule;
+use WHMCS\User\User;
+use WHMCS\Support\Ticket;
+use WHMCS\Database\Capsule;
+use WHMCS\Support\Ticket\Reply as TicketReply;
 
 /**
  * WHMCS Support Tickets User Permission Viewer
@@ -11,11 +14,10 @@ use Illuminate\Database\Capsule\Manager as Capsule;
  * @author     Lee Mahoney <lee@leemahoney.dev>
  * @copyright  Copyright (c) Lee Mahoney 2022
  * @license    MIT
- * @version    1.0.1
+ * @version    1.0.2
  * @link       https://leemahoney.dev
  */
 
-# No direct calls please
 if (!defined('WHMCS')) {
     die('This file cannot be accessed directly');
 }
@@ -26,8 +28,8 @@ function ticket_user_permissions_viewer($vars) {
     $ticketID = $vars['ticketid'];
 
     # Grab the ticket details as well as all replies to the ticket
-    $ticket         = Capsule::table('tbltickets')->where('id', $ticketID)->first();
-    $ticketReplies  = Capsule::table('tblticketreplies')->where('tid', $ticketID)->get();
+    $ticket         = Ticket::where('id', $ticketID)->first();
+    $ticketReplies  = TicketReply::where('tid', $ticketID)->get();
 
     # Store the user ID's for those involved with the tickes
     $userIds = [];
@@ -40,13 +42,15 @@ function ticket_user_permissions_viewer($vars) {
     # Check all replies and add the related users (only if they are an actual user and have not already been added to the userIds array)
     foreach ($ticketReplies as $reply) {
 
-        if ($reply->requestor_id != 0 && !in_array($reply->requestor_id, $userIds)) {
-            $userIds[] = $reply->requestor_id;
+        if ($reply->requestor_id == 0 && in_array($reply->requestor_id, $userIds)) {
+            continue;
         }
+
+        $userIds[] = $reply->requestor_id;
 
     }
 
-    # Have to turn to JavaScript to add the actual sidebar content -_-
+    # Have to turn to JavaScript to add the actual sidebar content.
     $html = '
     <script type="text/javascript">
 
@@ -66,14 +70,17 @@ function ticket_user_permissions_viewer($vars) {
     if(count($userIds)) {
 
         $html .= '<ol>';
+
         foreach ($userIds as $userId) {
 
-            $user = Capsule::table('tblusers')->where('id', $userId)->first();
+            $user = User::where('id', $userId)->first();
 
             $html .= '<li><a href="/admin/index.php?rp=/admin/client/' . $ticket->userid . '/user/' . $user->id . '/manage" data-user-id="' . $user->id . '" class="btn-permissions open-modal" data-modal-title="Manage User: ' . $user->email . '" data-modal-size="modal-lg" data-btn-submit-label="Save" data-btn-submit-id="btnSetPermissions">' . $user->first_name . ' ' . $user->last_name . '</li>';
 
         }
+
         $html .= '</ol>';
+        
     } else {
         $html .= 'No users found';
     }
